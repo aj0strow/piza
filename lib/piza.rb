@@ -1,4 +1,5 @@
 require 'piza/version'
+require 'piza/api'
 
 module Piza
   
@@ -7,5 +8,7 @@ module Piza
   def self.unique_name
     @unique_name = @unique_name.next
   end
+  
+  
   
 end
