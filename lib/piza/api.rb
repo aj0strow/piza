@@ -3,10 +3,11 @@ module Piza
     attr_accessor :filters, :actions
     
     def registered(app)
+      resolve!
       actions.each do |http|
-        uri_path = Piza.wrap(action[:path])
+        uri_path = Piza.wrap(http[:path])
         app.send(http[:http], uri_path) do
-          http[:actions].each(&:call)
+          http[:actions].map(&:call).last
         end
       end
     end

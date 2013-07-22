@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'piza'
+require 'sinatra/base'
+require 'rack/test'
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
