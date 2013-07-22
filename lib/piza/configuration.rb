@@ -1,4 +1,4 @@
-module Piza
+module Piza  
   class Configuration
     attr_accessor :prefix, :postfix
     
@@ -7,4 +7,18 @@ module Piza
       self.postfix = ''
     end
   end
+  
+  class << self
+    attr_reader :configuration
+    
+    def configure
+      yield configuration
+    end
+    
+    def reset_configuration!
+      @configuration = Configuration.new
+    end
+  end
+  
+  reset_configuration!
 end

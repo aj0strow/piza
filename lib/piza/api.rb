@@ -3,6 +3,12 @@ module Piza
     attr_accessor :filters, :actions
     
     def registered(app)
+      actions.each do |http|
+        uri_path = Piza.wrap(action[:path])
+        app.send(http[:http], uri_path) do
+          http[:actions].each(&:call)
+        end
+      end
     end
     
     [:before, :after].each do |filter|
