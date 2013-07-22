@@ -4,4 +4,11 @@ describe Piza do
   it 'should provide unique names' do
     expect(Piza.unique_name).not_to eq(Piza.unique_name)
   end
+  
+  it 'should be configurable' do
+    Piza.configure do |config|
+      config.prefix = '/api/'
+    end
+    expect(Piza.configuration.prefix).to eq('/api/')
+  end
 end
