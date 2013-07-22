@@ -17,46 +17,53 @@ module Piza
       end
     end
     
-    def mount(path_piece, api = nil, &block)
+    def mount(path_piece, api = nil, &block)   
       if block_given?
-        api = Module.new do
-          extend Piza::API
-          module_eval(&block)
-        end
+        api = Module.new.extend(Piza::API)
+        api.module_eval(&block)
       end
       mount_api(path_piece, api)
     end
     
     def resolve!
-      filters[:before].each do |_, verbs, block|
-        actions.each do |action|
-          action[:actions].unshift(block) if appropriate?(verbs, action[:http])
-        end
+      unless resolved?
+        apply_filters_to_actions(:before, :unshift)
+        apply_filters_to_actions(:after, :push)
+        self.filters = nil
       end
-      filters[:after].each do |_, verbs, block|
-        actions.each do |action|
-          action[:actions].push(block) if appropriate?(verbs, action[:http])
-        end
-      end
-      self.filters = nil
+    end
+    
+    def resolved?
+      filters.nil?
     end
             
     private
     
-    def mount_api(path_piece, api)
-      api.resolve!
-      api.actions.each do |action|
-        action[:path] = [ path_piece, action[:path] ].compact.join('/')
+    def apply_filters_to_actions(key, ary_method)
+      filters[key].each do |_, verbs, block|
+        actions.each do |action|
+          action[:actions].send(ary_method, block) if appropriate?(verbs, action[:http])
+        end
       end
-      actions.concat(api.actions)
     end
     
     def appropriate?(verbs, verb)
       verbs.empty? || verbs.include?(verb)
     end
     
+    def mount_api(path_piece, api)
+      api.resolve!
+      if path_piece.is_a?(Symbol)
+        path_piece = ':' + path_piece.to_s
+      end
+      api.actions.each do |action|
+        action[:path] = [ path_piece, action[:path] ].compact.join('/')
+      end
+      actions.concat(api.actions)
+    end
+    
     def self.extended(api)
-      api.filters = { before: [], after: [], http: [] }
+      api.filters = { before: [], after: [] }
       api.actions = []
     end
     

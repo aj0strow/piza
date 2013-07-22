@@ -89,5 +89,14 @@ describe Piza::API do
       action = @module.actions[0]
       expect(action[:path]).to eq('a/b/c')
     end
+    
+    it 'should set the path as a symbol' do
+      @module.mount :id do
+        get{}
+      end
+      action = @module.actions.first
+      expect(action[:path]).to eq(':id')
+    end
+    
   end
 end
