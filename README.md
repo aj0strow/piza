@@ -61,14 +61,6 @@ module API::Posts
       @resource.destroy
     end
   end
-
-  def self.mounted
-    def post_params
-      params.require(:post).permit(:title, :content)
-    end
-    
-    
-  end
 end
 ``` 
 
