@@ -64,6 +64,8 @@ module API::Posts
 end
 ``` 
 
+To include the API in your app, just register it: `register API`
+
 ## Notes
 
 If people start using them gem, I'll put it on rubygems. Until then, from the source:
