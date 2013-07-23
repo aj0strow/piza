@@ -2,15 +2,19 @@
 
 ![](https://fbcdn-sphotos-g-a.akamaihd.net/hphotos-ak-ash3/944296_10151808876277269_290364435_n.jpg)
 
-There are a ton of great ruby web frameworks that support APIs. Most of them focus on resource controllers or HTTP actions, but I haven't found any that let you do global filters for authentication on POST, PUT, DELETE, let you set resources once and handle 404s, and the like.
+APIs have a lot of repetitive logic. Records need to be queried and found. Permissions need to be checked for certiain actions. After observing much of this is related to where in the API you are, I thought it would be a good idea to kind of build modules of an API on top of previous logic dependent on the URI.
+
+For example, with a `/users` start to the URI, if you were to append `/:id` to that, every action is likely to query the database for the User with that :id, and would want to throw a 404 if it wasn't found. *Piza* works by applying before and after filters to specific HTTP verbs for the URI, and all things that build on top of it, or are appended to it in URI terms. 
 
 ### An Example
 
 Suppose you have the Sinatra helpers `json`, `signed_in?` and `persist` for rendering resources as json, checking login status, and saving resources. Then you might want an API like the following:
 
 ```ruby
+# lib/api.rb
+
 require 'piza'
-require './api/posts'
+require 'lib/api/posts'
 
 module API
   extend Piza::API
@@ -30,35 +34,39 @@ module API
   end
 end
 
-module API::Posts
-  extend Piza::API
-  
-  get do
-    @resource = Post.all(limit: 50)
-  end
-    
-  post do
-    @resource = Post.new(post_params)
-  end
-    
-  append :identifier do
-    before do
-      @resource = Post.first(identifier: params[:identifier])
-      halt 404 if @resource.nil?
-    end
-    
-    before :put, :patch, :delete do
-      halt 403 unless @resource[:user_id] == current_user.id
-    end
-      
-    get{}
-      
-    put do
-      @resource.update(post_params)
-    end
+# lib/api/posts.rb
 
-    delete do
-      @resource.destroy
+module API
+  module Posts
+    extend Piza::API
+    
+    get do
+      @resource = Post.all(limit: 50)
+    end
+      
+    post do
+      @resource = Post.new(post_params)
+    end
+      
+    append :identifier do
+      before do
+        @resource = Post.first(identifier: params[:identifier])
+        halt 404 if @resource.nil?
+      end
+    
+      before :put, :patch, :delete do
+        halt 403 unless @resource[:user_id] == current_user.id
+      end
+      
+      get{}
+      
+      put do
+        @resource.update(post_params)
+      end
+
+      delete do
+        @resource.destroy
+      end
     end
   end
 end
