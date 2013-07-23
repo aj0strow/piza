@@ -1,6 +1,6 @@
 # (Leaning Tower Of) Piza
 
-> Build up APIs with ease
+![](https://fbcdn-sphotos-g-a.akamaihd.net/hphotos-ak-ash3/944296_10151808876277269_290364435_n.jpg)
 
 There are a ton of great ruby web frameworks that support APIs. Most of them focus on resource controllers or HTTP actions, but I haven't found any that let you do global filters for authentication on POST, PUT, DELETE, let you set resources once and handle 404s, and the like.
 
