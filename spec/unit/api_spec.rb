@@ -16,7 +16,7 @@ describe Piza::API do
     
     it 'should add to after filters' do
       after_filter = @module.filters[:after].first
-      expect(after_filter[1]).to eq([:post, :put])
+      expect(after_filter[0]).to eq([:post, :put])
     end
   end
   
