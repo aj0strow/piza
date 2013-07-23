@@ -56,7 +56,7 @@ describe Piza::API do
     end
   end
   
-  describe 'mount' do
+  describe 'append' do
     before :each do
       @module = Module.new do
         extend Piza::API
@@ -68,21 +68,21 @@ describe Piza::API do
         extend Piza::API
         get{}
       end
-      @module.mount('test', api)
+      @module.append('test', api)
       expect(@module.actions.count).to eq(1)
     end
     
     it 'should allow a block as well' do
-      @module.mount 'test' do
+      @module.append 'test' do
         get do
         end
       end
       expect(@module.actions.count).to eq(1)
     end
     
-    it 'should mount infinitely' do
-      @module.mount 'a' do
-        mount 'b' do
+    it 'should append infinitely' do
+      @module.append 'a' do
+        append 'b' do
           get('c') {}
         end
       end
@@ -91,11 +91,19 @@ describe Piza::API do
     end
     
     it 'should set the path as a symbol' do
-      @module.mount :id do
+      @module.append :id do
         get{}
       end
       action = @module.actions.first
       expect(action[:path]).to eq(':id')
+    end
+    
+    it 'should allow an empty pathstring' do
+      @module.append '' do
+        get('hello'){}
+      end
+      action = @module.actions.first
+      expect(action[:path]).to eq('hello')
     end
     
   end

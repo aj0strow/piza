@@ -26,7 +26,7 @@ describe 'Sinatra acceptance test' do
       'Hello'
     end
     
-    mount 'messages', MessagesAPI
+    append 'messages', MessagesAPI
   end
   
 

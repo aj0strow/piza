@@ -15,7 +15,7 @@ require './api/posts'
 module API
   extend Piza::API
   
-  mount 'posts', Posts
+  append 'posts', Posts
   
   before :post, :put, :delete do
     halt 403 unless signed_in?
@@ -41,7 +41,7 @@ module API::Posts
     @resource = Post.new(post_params)
   end
     
-  mount :identifier do
+  append :identifier do
     before do
       @resource = Post.first(identifier: params[:identifier])
       halt 404 if @resource.nil?

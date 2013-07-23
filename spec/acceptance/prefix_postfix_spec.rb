@@ -6,7 +6,7 @@ describe 'Prefix and postfix' do
   module API2
     extend Piza::API
   
-    mount 'users' do
+    append 'users' do
       before :get do
         @user = "User ##{params[:id]}"
       end

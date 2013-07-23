@@ -24,12 +24,12 @@ module Piza
       end
     end
     
-    def mount(path_piece, api = nil, &block)   
+    def append(path_piece, api = nil, &block)   
       if block_given?
         api = Module.new.extend(Piza::API)
         api.module_eval(&block)
       end
-      mount_api(path_piece, api)
+      append_api(path_piece, api)
     end
     
     def resolve!
@@ -60,12 +60,12 @@ module Piza
       verbs.empty? || verbs.include?(verb)
     end
     
-    def mount_api(path_piece, api)
+    def append_api(path_piece, api)
       api.resolve!
       path_piece = parameterize(path_piece)
       api.actions.each do |action|
         path = parameterize(action[:path])
-        action[:path] = [ path_piece, path ].compact.join('/')
+        action[:path] = [ path_piece, path ].reject{ |s| s.nil? || s.empty? }.join('/')
       end
       actions.concat(api.actions)
     end
