@@ -66,6 +66,19 @@ end
 
 To include the API in your app, just register it: `register API`
 
+### Configuration
+
+The default configuration:
+
+```ruby
+Piza.configure do |config|
+  config.prefix = '/'
+  config.postfix = ''
+end
+```
+
+To have every route start with ``'/api/'`` configure the prefix. To make every route end with `'.json'`, configure the postfix. 
+
 ## Notes
 
 If people start using them gem, I'll put it on rubygems. Until then, from the source:
